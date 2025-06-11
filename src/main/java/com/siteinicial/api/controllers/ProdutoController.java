@@ -23,7 +23,7 @@ public class ProdutoController {
     ProdutoRepository repository;
 
     @PostMapping()
-    public ResponseEntity<Void> novoProduto(@RequestBody @Valid ProdutoDTO entity) {
+    public ResponseEntity novoProduto(@RequestBody @Valid ProdutoDTO entity) {
         Produto produto = new Produto(entity);
         this.repository.save(produto);    
         

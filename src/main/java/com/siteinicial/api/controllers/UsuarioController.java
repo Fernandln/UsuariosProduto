@@ -4,7 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siteinicial.api.repositories.UsuarioRepository;
+import com.siteinicial.api.securityConfig.ServicoToken;
 import com.siteinicial.api.usuarios.AuthenticationDTO;
+import com.siteinicial.api.usuarios.LoginResponseDTO;
 import com.siteinicial.api.usuarios.NovoUsuarioDTO;
 import com.siteinicial.api.usuarios.Usuario;
 
@@ -22,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
+
+    @Autowired
+    private ServicoToken servicoToken;
     
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -32,7 +37,9 @@ public class UsuarioController {
     public ResponseEntity logar(@RequestBody @Valid AuthenticationDTO dados) {
         var loginSenha = new UsernamePasswordAuthenticationToken(dados.login(), dados.senha());
         var auth = this.authenticationManager.authenticate(loginSenha);
-        return ResponseEntity.ok().build();
+        var token = servicoToken.gerarToken((Usuario) auth.getPrincipal());
+        
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
     
     @PostMapping("/cadastrar")
